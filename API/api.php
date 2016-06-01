@@ -28,13 +28,20 @@
         
         echo $articleInfo = $article->getArticle($articleId);
         
+        
     } else if ($mainArg==='SetArticle') {
         //edit or add the submitted argument information
         
         
-    }  else if ($mainArg==='FindArticle') {
+    }  else if ($mainArg==='findarticle') {
         //return list of articles matching the search string
         
+        $searchstring = array_shift($request);
+        
+        include_once('_class/article.php');
+        $article = new article();
+        
+        echo $articleArr = $article->findArticles($searchstring);
         
     } else if ($mainArg==='test') {
         $arr = array('A' => 1, 'B' => 2, 'C' => 3, 'Response' => true);
