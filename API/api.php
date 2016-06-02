@@ -29,7 +29,7 @@
         echo $articleInfo = $article->getArticle($articleId);
         
         
-    } else if ($mainArg==='SetArticle') {
+    } else if ($mainArg==='setarticle') {
         //edit or add the submitted argument information
         
         

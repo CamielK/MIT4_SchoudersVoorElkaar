@@ -8,15 +8,28 @@ class article {
         //call to database connection
         include_once('dbConnection.php');
         $db = new databaseConnection();
-        $articleInfo = $db->getArticle($artId);
         
-        if (!$articleInfo) {
-            $articleInfo['error'] = 'Error getting article from database.';
+        //form query
+        $query = "
+            SELECT Article.*, User.name
+            FROM `Article` 
+            JOIN User ON Article.author_id = User.id
+            WHERE Article.id='$artId';";
+        
+        //do query
+        $result = $db->queryDatabase($query);
+
+        //check result
+        $articleInfo = array();
+        if ($result->num_rows > 0) {
+            $articleInfo = $result->fetch_assoc();
+        } else {
+            $articleInfo['error'] = 'Error getting information from database.';
         }
-        
-        
+    
         //return article json
         return json_encode($articleInfo);
+        
     }
     
     
@@ -26,14 +39,33 @@ class article {
         //call to database connection
         include_once('dbConnection.php');
         $db = new databaseConnection();
-        $articleArr = $db->findArticles($searchstring);
         
-        if (!$articleInfo) {
-            $articleArr['error'] = 'Did not find any articles matching the searchstring.';
+        //form query
+        $query = "
+            SELECT Article.id, User.name, Article.title, Article.tags, Article.category, Article.published_at, Article.updated_at
+            FROM `Article` 
+            JOIN User ON Article.author_id = User.id
+            WHERE (Article.title LIKE '%$searchstring%') 
+                OR (Article.content LIKE '%$searchstring%') 
+                OR (Article.tags LIKE '%$searchstring%') 
+                OR (Article.category LIKE '%$searchstring%')
+                OR (User.name LIKE '%$searchstring%')";
+        
+        //do query
+        $result = $db->queryDatabase($query);
+
+        //check result
+        $articleList = array();
+        if ($result->num_rows > 0) {
+        	while ($row = $result->fetch_assoc()) {
+        		$articleList[] = $row;
+        	}
+        } else {
+            $articleList['error'] = 'Did not find any resources matching the search string.';
         }
-        
+    
         //return article json
-        return json_encode($articleArr);
+        return json_encode($articleList);
     }
     
 }
