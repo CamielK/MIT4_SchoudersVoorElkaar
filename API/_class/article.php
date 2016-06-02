@@ -11,7 +11,7 @@ class article {
         
         //form query
         $query = "
-            SELECT Article.*, User.name
+            SELECT Article.*, User.name AS author_name
             FROM `Article` 
             JOIN User ON Article.author_id = User.id
             WHERE Article.id='$artId';";
@@ -42,7 +42,7 @@ class article {
         
         //form query
         $query = "
-            SELECT Article.id, User.name, Article.title, Article.tags, Article.category, Article.published_at, Article.updated_at
+            SELECT Article.id, User.name AS author_name, Article.title, Article.tags, Article.category, Article.published_at, Article.updated_at
             FROM `Article` 
             JOIN User ON Article.author_id = User.id
             WHERE (Article.title LIKE '%$searchstring%') 

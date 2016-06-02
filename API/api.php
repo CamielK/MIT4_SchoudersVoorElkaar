@@ -33,7 +33,7 @@
         //edit or add the submitted argument information
         
         
-    }  else if ($mainArg==='findarticle') {
+    }  else if ($mainArg==='findarticles') {
         //return list of articles matching the search string
         
         $searchstring = array_shift($request);
@@ -42,6 +42,27 @@
         $article = new article();
         
         echo $articleArr = $article->findArticles($searchstring);
+        
+    } else if ($mainArg==='getcomments') {
+        //return list of articles matching the search string
+        
+        $secondArg = array_shift($request);
+        
+        include_once('_class/comment.php');
+        $comment = new comment();
+        
+        if ($secondArg==='article') {
+            $artId = array_shift($request);
+            echo $comments = $comment->getCommentsByArticleId($artId);
+            
+        } else if ($secondArg==='user') {
+            $userId = array_shift($request);
+            echo $comments = $comment->getCommentsByUserId($userId);
+            
+        } else {
+            $arr = array('Error' => 'Incorrect API arguments', 'Response' => false);
+            echo json_encode($arr);
+        }
         
     } else if ($mainArg==='test') {
         $arr = array('A' => 1, 'B' => 2, 'C' => 3, 'Response' => true);
