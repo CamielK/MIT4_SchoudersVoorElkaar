@@ -1,0 +1,17 @@
+<resources>
+  <style name="sveTheme.Base" parent="@android:style/Theme.Material.Light.DarkActionBar">
+  </style>
+  
+  <style name="sveTheme" parent="sveTheme.Base">
+    <item name="android:actionBarStyle">@style/sveTheme.ActionBarStyle</item>
+  </style>
+
+  <style name="sveTheme.ActionBarStyle" parent="@android:style/Widget.Material.Light.ActionBar">
+    <item name="android:titleTextStyle">@style/sveTheme.ActionBar.TitleTextStyle</item>
+    <item name="android:background">@color/material_red_500</item>
+  </style>
+
+  <style name="sveTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+    <item name="android:textColor">@android:color/white</item>
+  </style>
+</resources>
