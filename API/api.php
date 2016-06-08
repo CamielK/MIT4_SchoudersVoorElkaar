@@ -11,57 +11,88 @@
     header("Access-Control-Allow-Origin: *");
     header('Content-Type: application/json');
 
-    //*** filter request url arguments
+    //*** filter request url parameters
     $method = $_SERVER['REQUEST_METHOD'];
     $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
     $input = json_decode(file_get_contents('php://input'),true);
 
+
     //*** execute API function depending on main argument
     $mainArg = array_shift($request);
-    if ($mainArg==='getarticle') {
-        //return the article information for the given article ID
+    if ($mainArg==='article') {
         
-        $articleId = array_shift($request);
-        
+        //include article class
         include_once('_class/article.php');
         $article = new article();
         
-        echo $articleInfo = $article->getArticle($articleId);
+        //check secondary argument
+        $subArg = array_shift($request);
+        if ($subArg==='get') { 
+            //return given article id information
         
+            $articleId = array_shift($request);
+            echo $articleInfo = $article->getArticle($articleId);
+            
+        } else if ($subArg==='add') {
+            //edit or add the submitted argument information
+            
+            if ($method==='POST') {
+                echo $response = $article->addArticle($_POST);
+            } else {
+                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                echo json_encode($arr);
+            }
+            
+            
+        } else if ($subArg==='find') {
+            //return a list of articles matching the search string
+            
+            $searchstring = array_shift($request);
+            echo $articleArr = $article->findArticles($searchstring);
+            
+        } else if ($subArg==='edit') {
+            //edit the article
+            
+            if ($method==='POST') {
+                echo $response = $article->editArticle($_POST);
+            } else {
+                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                echo json_encode($arr);
+            }
+            
+        } else if ($subArg==='delete') {
+            //delete the article
+            
+            $articleId = array_shift($request);
+            echo $response = $article->deleteArticle($articleId);
+            
+        }
         
-    } else if ($mainArg==='setarticle') {
+    } else if ($mainArg==='comment') {
         //edit or add the submitted argument information
-        
-        
-    }  else if ($mainArg==='findarticles') {
-        //return list of articles matching the search string
-        
-        $searchstring = array_shift($request);
-        
-        include_once('_class/article.php');
-        $article = new article();
-        
-        echo $articleArr = $article->findArticles($searchstring);
-        
-    } else if ($mainArg==='getcomments') {
-        //return list of articles matching the search string
-        
-        $secondArg = array_shift($request);
         
         include_once('_class/comment.php');
         $comment = new comment();
         
-        if ($secondArg==='article') {
-            $artId = array_shift($request);
-            echo $comments = $comment->getCommentsByArticleId($artId);
+        $subArg = array_shift($request);
+        if ($subArg==='get') {
             
-        } else if ($secondArg==='user') {
-            $userId = array_shift($request);
-            echo $comments = $comment->getCommentsByUserId($userId);
+            $commentType = array_shift($request);
+            if ($commentType==='article') {
+                $artId = array_shift($request);
+                echo $comments = $comment->getCommentsByArticleId($artId);
+            } else if ($commentType==='user') {
+                $userId = array_shift($request);
+                echo $comments = $comment->getCommentsByUserId($userId);
+            }
+        } else if ($subArg==='add') {
             
-        } else {
-            $arr = array('Error' => 'Incorrect API arguments', 'Response' => false);
-            echo json_encode($arr);
+            if ($method==='POST') {
+                echo $response = $comment->addComment($_POST);
+            } else {
+                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                echo json_encode($arr);
+            }
         }
         
     } else if ($mainArg==='test') {

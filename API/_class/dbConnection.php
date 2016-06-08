@@ -21,7 +21,7 @@ class databaseConnection {
     }
     
     //close connection
-    private function closeConnection() {
+    public function closeConnection() {
         $this->connection->close();
     }
     
@@ -35,9 +35,6 @@ class databaseConnection {
         
         //query database
         $queryResult = $this->connection->query($query);
-        
-        //close connection
-        $this->closeConnection();
         
         //return query output
         return $queryResult;
