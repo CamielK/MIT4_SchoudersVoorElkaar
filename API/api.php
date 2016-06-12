@@ -2,8 +2,7 @@
 
     /* This php page serves as the main entry for backend API calls
         Requests should be targeted at URL: 
-        'http://84.30.147.189/sveAPI/api/MAIN_ARG/SUB_ARGUMENTS'
-        depending on the first argument, a few other arguments can be given
+        'http://SERVER_IP/sveAPI/api.php/MAIN_ARG/SUB_ARGUMENTS'
     */
 
 
@@ -33,22 +32,18 @@
             $articleId = array_shift($request);
             echo $articleInfo = $article->getArticle($articleId);
             
-        } else if ($subArg==='add') {
-            //edit or add the submitted argument information
-            
-            if ($method==='POST') {
-                echo $response = $article->addArticle($_POST);
-            } else {
-                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
-                echo json_encode($arr);
-            }
-            
-            
         } else if ($subArg==='find') {
             //return a list of articles matching the search string
             
             $searchstring = array_shift($request);
             echo $articleArr = $article->findArticles($searchstring);
+            
+        } else if ($subArg==='top') {
+            //return a list of X top articles
+            
+            $requestArticlesCount = array_shift($request);
+            
+            echo $response = $article->getTopArticles($requestArticlesCount);
             
         } else if ($subArg==='edit') {
             //edit the article
@@ -63,16 +58,22 @@
         } else if ($subArg==='delete') {
             //delete the article
             
-            $articleId = array_shift($request);
-            echo $response = $article->deleteArticle($articleId);
+            if ($method==='POST') {
+                echo $response = $article->deleteArticle($_POST);
+            } else {
+                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
+                echo json_encode($arr);
+            }
             
-        } else if ($subArg==='top') {
-            //return a list of X top articles
+        } else if ($subArg==='add') {
+            //edit or add the submitted argument information
             
-            $requestArticlesCount = array_shift($request);
-            
-            echo $response = $article->getTopArticles($requestArticlesCount);
-            
+            if ($method==='POST') {
+                echo $response = $article->addArticle($_POST);
+            } else {
+                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
+                echo json_encode($arr);
+            }
         }
         
     } else if ($mainArg==='comment') {
@@ -102,12 +103,27 @@
             }
         }
         
+    } else if ($mainArg==='auth') {
+        
+        include_once('_class/authentication.php');
+        $auth = new auth();
+        if (isset($_POST['digest'])) {
+            if ($auth->validateDigest($_POST['digest'], $_POST['nonce'], '/auth', $_POST['username'])) {
+                $arr = array('status' => $auth->validateDigest($_POST['digest'], $_POST['nonce'], '/auth', $_POST['username']), 'Response' => true);
+            } else {
+                $arr = array('status' => 'invalid login', 'Response' => false);
+            }
+        } else {
+            $arr = $auth->getChallenge();
+        }
+        echo json_encode($arr);
+        
+        
     } else if ($mainArg==='test') {
         $arr = array('A' => 1, 'B' => 2, 'C' => 3, 'Response' => true);
         echo json_encode($arr);
-    }
-    else {
-        $arr = array('Error' => 'Incorrect API arguments', 'Response' => false);
+    } else {
+        $arr = array('Error' => 'Incorrect API arguments. Check API documentation for a list of valid arguments', 'Response' => false);
         echo json_encode($arr);
     }
 
