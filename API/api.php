@@ -39,7 +39,7 @@
             if ($method==='POST') {
                 echo $response = $article->addArticle($_POST);
             } else {
-                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
                 echo json_encode($arr);
             }
             
@@ -56,7 +56,7 @@
             if ($method==='POST') {
                 echo $response = $article->editArticle($_POST);
             } else {
-                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
                 echo json_encode($arr);
             }
             
@@ -65,6 +65,13 @@
             
             $articleId = array_shift($request);
             echo $response = $article->deleteArticle($articleId);
+            
+        } else if ($subArg==='top') {
+            //return a list of X top articles
+            
+            $requestArticlesCount = array_shift($request);
+            
+            echo $response = $article->getTopArticles($requestArticlesCount);
             
         }
         
@@ -90,7 +97,7 @@
             if ($method==='POST') {
                 echo $response = $comment->addComment($_POST);
             } else {
-                $arr = array('Error' => 'Method should be post, but '.$method.' method received', 'Response' => false);
+                $arr = array('Error' => 'Method should be POST, but '.$method.' method received', 'Response' => false);
                 echo json_encode($arr);
             }
         }
