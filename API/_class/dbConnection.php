@@ -20,6 +20,11 @@ class databaseConnection {
         return $conn;
     }
     
+    //return connection
+    public function getConnection() {
+        return $this->connection;
+    }
+    
     //close connection
     public function closeConnection() {
         $this->connection->close();

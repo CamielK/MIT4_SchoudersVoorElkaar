@@ -80,6 +80,52 @@ class article {
     
     
     //return a list of articles that match the given searchstring
+    public function editArticle($articleJson) {
+    	
+        //call to database connection
+        include_once('dbConnection.php');
+        $db = new databaseConnection();
+        
+        $inputArr = $articleJson;
+        
+        //construct query from input array
+        $count = 0;
+        $query = "UPDATE `sve`.`Article` SET ";
+        foreach ($inputArr as $key => $value) {
+            if ($key !== 'article_id') {
+                if ($count > 0) {
+                    $query .= ", ";
+                }
+                
+                //escape inputs
+                $key = mysqli_real_escape_string($db->getConnection(), $key);
+                $value = mysqli_real_escape_string($db->getConnection(), $value);
+                
+                $query .= "`".$key."` = '".$value."'";
+                $count += 1;
+            }
+        }
+        $query .= " WHERE `Article`.`id` = '".$inputArr['article_id']."';";
+        
+        //do query
+        $result = $db->queryDatabase($query);
+
+        //check result
+        if ($result) {
+        	$response['success'] = 'Article was updated.';
+        } else {
+            $response['error'] = 'Error updating article.';
+        }
+        
+        //close connection
+        $db->closeConnection();
+    
+        //return result
+        return json_encode($response);
+    }
+    
+    
+    //return a list of articles that match the given searchstring
     public function findArticles($searchstring) {
     	
         //call to database connection
@@ -104,7 +150,7 @@ class article {
         $articleList = array();
         if ($result->num_rows > 0) {
         	while ($row = $result->fetch_assoc()) {
-        		$articleList[] = $row;
+        		$articleList['articles'][] = $row;
         	}
         } else {
             $articleList['error'] = 'Did not find any resources matching the search string.';

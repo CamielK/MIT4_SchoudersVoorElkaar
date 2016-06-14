@@ -24,7 +24,7 @@ class comment {
         if ($result->num_rows > 0) {
             $commentList = array();
         	while ($row = $result->fetch_assoc()) {
-        		$commentList[] = $row;
+        		$commentList['comments'][] = $row;
         	}
         } else {
             $commentList['error'] = 'Did not find any comments for the given article.';
@@ -58,7 +58,7 @@ class comment {
         if ($result->num_rows > 0) {
             $commentList = array();
         	while ($row = $result->fetch_assoc()) {
-        		$commentList[] = $row;
+        		$commentList['comments'][] = $row;
         	}
         } else {
             $commentList['error'] = 'Did not find any comments for the given user.';

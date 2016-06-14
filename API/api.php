@@ -16,8 +16,12 @@
     $input = json_decode(file_get_contents('php://input'),true);
 
 
+
+
     //*** execute API function depending on main argument
     $mainArg = array_shift($request);
+    
+    //article methods
     if ($mainArg==='article') {
         
         //include article class
@@ -76,6 +80,11 @@
             }
         }
         
+        
+        
+        
+        
+    //comment methods    
     } else if ($mainArg==='comment') {
         //edit or add the submitted argument information
         
@@ -88,7 +97,9 @@
             $commentType = array_shift($request);
             if ($commentType==='article') {
                 $artId = array_shift($request);
-                echo $comments = $comment->getCommentsByArticleId($artId);
+                $comments = $comment->getCommentsByArticleId($artId);
+                echo $comments;
+                
             } else if ($commentType==='user') {
                 $userId = array_shift($request);
                 echo $comments = $comment->getCommentsByUserId($userId);
@@ -103,6 +114,45 @@
             }
         }
         
+        
+        
+        
+        
+    //rating methods
+    } else if ($mainArg==='rating') {
+        
+        include_once('_class/rating.php');
+        $rating = new rating();
+        
+        $subArg = array_shift($request);
+        if ($subArg==='get') {
+            
+            $userId = array_shift($request);
+            $articleId = array_shift($request);
+            
+            echo $response = $rating->getRating($userId, $articleId);
+            
+        } else if ($subArg==='add') {
+            
+            $userId = array_shift($request);
+            $articleId = array_shift($request);
+            $stars = array_shift($request);
+            
+            if ($stars > 0) {
+                $response = $rating->addRating($userId, $articleId, $stars);
+            } else {
+                $response = json_encode(array('Error' => 'Invalid rating', 'Response' => false));
+            }
+            
+            echo $response;
+            
+        }
+        
+        
+        
+        
+        
+    //login methods
     } else if ($mainArg==='auth') {
         
         include_once('_class/authentication.php');
